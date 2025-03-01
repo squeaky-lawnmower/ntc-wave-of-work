@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\UserAbout;
-use App\Models\UserExperience;
+use App\Models\UserSkill;
 use Illuminate\Http\Request;
+use App\Models\UserEducation;
+use App\Models\UserExperience;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
@@ -26,16 +29,21 @@ class ProfileController extends Controller
 
         $profile = User::where('id', $id)->first();
         $about = UserAbout::where('user_id', $id)->first();
-        $experiences = UserExperience::where('user_id', $id)->orderByDesc('updated_at')->get();
+        $experiences = UserExperience::where('user_id', $id)->orderByDesc('end_year')->get();
+        $education = UserEducation::where('user_id', $id)->orderByDesc('end_year')->get();
+        $skills = UserSkill::where('user_id', $id)->get();
 
         if ($profile == null) {
             return redirect(route("home"))->with('error','Profile not found.');
         }
 
         $data = [
+            'id' => $id,
             'profile' => $profile,
             'about' => $about,
-            'experiences' => $experiences
+            'experiences' => $experiences,
+            'education' => $education,
+            'skills' => $skills
         ];
 
         return view("profile.index", ['id', $id])->with($data);
@@ -57,7 +65,7 @@ class ProfileController extends Controller
             return redirect(route("home"))->with('error','Profile not found.');
         }
 
-        return view("profile.personal", ['id', $id]);
+        return view("profile.personal", ['id', $id])->with('id', $id);
     }
 
     function personalPost(Request $request, $id) {
@@ -66,7 +74,8 @@ class ProfileController extends Controller
         
         $request->validate([
             'firstname' => 'required',
-            'lastname' => 'required',   
+            'lastname' => 'required',
+            "resume_filename" => 'sometimes|mimes:pdf|max:10000'
         ]);
 
         $profile->firstname = $request->firstname;
@@ -77,7 +86,12 @@ class ProfileController extends Controller
         $profile->city = $request->city;
         $profile->zipcode = $request->zipcode;
         $profile->phone = $request->phone;
-        $profile->resume_filename = $request->resume_filename;
+
+        if($request->hasFile('resume_filename')) {
+            File::delete(storage_path('app/private/'.$profile->resume_filename));
+            $profile->resume_filename = $request->file('resume_filename')->store('cv');
+        }
+        
 
         $profile->save();
 
@@ -195,9 +209,101 @@ class ProfileController extends Controller
             return redirect(route('login'));
         }
 
-        $experiences = UserExperience::where('user_id', $id)->orderByDesc('updated_at')->get();
+        $education = UserEducation::where('user_id', $id)->orderByDesc('end_year')->get();
 
-        return view("profile.education", ['id' => $id])->with('experiences', $experiences);
+        return view("profile.education", ['id' => $id])->with('education', $education);
     }    
+
+    function educationPost(Request $request, $id, $educId = null) {
+        
+        $request->validate([
+            'school' => 'required',
+            'start_month' => 'required',
+            'start_year' => 'required',
+            'end_month' => 'required',
+            'end_year' => 'required',
+        ]);
+
+        $message = "";
+        if ($educId != null) {
+            $message = "Updated";
+            $education = UserEducation::where('id', $educId)->first();
+            $education->school = $request->school;
+            $education->degree = $request->degree;
+            $education->start_month = $request->start_month;
+            $education->start_year = $request->start_year;
+            $education->end_month = $request->end_month;
+            $education->end_year = $request->end_year;
+            $education->save();
+        } else {    
+            $message = "Added";
+            $data['user_id'] = $id;
+            $data['school'] = $request->school;
+            $data['degree'] = $request->degree;
+            $data['start_month'] = $request->start_month;
+            $data['start_year'] = $request->start_year;
+            $data['end_month'] = $request->end_month;
+            $data['end_year'] = $request->end_year;
+
+            $education = UserEducation::create($data);
+            
+            if (!$education) {
+                return redirect(route('profile.edit.education', ['id'=> $id]))->with('error','Unable to save new education history.');
+            }
+        }
+
+        return redirect(route('profile.edit.education', ['id'=> $id]))->with('success', $message.' Successfully');     
+    }
+   
+    function educationDelete(Request $request, $id, $educId) {
+        $deleted = UserEducation::where('id', $educId)->delete();
+        if (!$deleted) {
+            return redirect(route('profile.edit.education', ['id'=> $id]))->with('error','Unable to delete education history.');
+        }
+        return redirect(route('profile.edit.education', ['id'=> $id]))->with('success', 'Deleted Successfully');     
+    }
+
+    function skill($id) {
+        
+        if($id == null) {
+            $id = auth()->user()->id;
+        }
+    
+        if(!Auth::check()) {
+            return redirect(route('login'));
+        }
+    
+        $skills = UserSkill::where('user_id', $id)->get();
+    
+        return view("profile.skill", ['id' => $id])->with('skills', $skills);
+    }
+    
+    function skillPost(Request $request, $id) {
+        
+        $request->validate([
+            'skill' => 'required'
+        ]);
+    
+        $data['user_id'] = $id;
+        $data['skill_name'] = $request->skill;
+    
+        $skills = UserSkill::create($data);
+        
+        if (!$skills) {
+            return redirect(route('profile.edit.skill', ['id'=> $id]))->with('error','Unable to save new skill.');
+        }
+    
+        return redirect(route('profile.edit.skill', ['id'=> $id]))->with('success', 'Add Successful');     
+    }
+    
+    function skillDelete(Request $request, $id, $skillId) {
+        $deleted = UserSkill::where('id', $skillId)->delete();
+        if (!$deleted) {
+            return redirect(route('profile.edit.skill', ['id'=> $id]))->with('error','Unable to delete skill.');
+        }
+        return redirect(route('profile.edit.skill', ['id'=> $id]))->with('success', 'Deleted Successfully');     
+    }
+
 }
+
 

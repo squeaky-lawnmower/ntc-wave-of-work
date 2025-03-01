@@ -15,7 +15,7 @@
         </div>
         <div class="row">
             <div class="col-12" style="background: #FAFAFA;" class="border-r rounded-r-lg">            
-                <form action="{{route('profile.edit.personal.post', ['id' => auth()->user()->id])}}" method="POST">
+                <form action="{{route('profile.edit.personal.post', ['id' => auth()->user()->id])}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row mt-3">
@@ -96,14 +96,22 @@
                         </div>
                     </div>              
                     <div class="row mt-2">
-                        <label class="form-label">Resume</label>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="resume_filename" placeholder="Choose file..." >
-                            <button class="btn btn-outline-secondary" type="button">Upload</button>
+                        <div class="col-8 col-sm-8 col-md-8 mt-3">
+                            <label class="form-label">Resume</label>
+                            <input class="form-control " name="resume_filename" type="file">
+                        </div>
+                        <div class="col-4 col-sm-4 col-md-4 mt-auto">
+                            @if('jobseeker' == auth()->user()->account_type && auth()->user()->id == $id && auth()->user()->resume_filename != null)
+                                <br />
+                                <h6><a href="{{route('resume.download')}}" target="_blank">View Uploaded Resume</a></h6>
+                            @else
+                                <br />
+                                <h6 class="form-label">You haven't uploaded a resume yet.</h6>               
+                            @endif
                         </div>
                     </div>      
                     <div class="row">
-                        <div class="col-12  col-sm-12 col-md-12 mt-3">
+                        <div class="col-12 col-sm-12 col-md-12 mt-3">
                             <button type="submit" class="btn btn-primary full-width">Update</button>
                         </div>
                     </div>

@@ -21,8 +21,8 @@
                 @if ($profile->phone)
                     <i class="fa fa-phone">&nbsp;&nbsp;</i>{{$profile->phone}}<br />
                 @endif
-                @if('jobseeker' == auth()->user()->account_type)
-                    <i class="fa fa-file">&nbsp;&nbsp;</i><a href="{{asset('pdf/CANDIDATE-RESUME.PDF')}}" target="_blank">CANDIDATE-RESUME.PDF</a>                
+                @if('jobseeker' == auth()->user()->account_type && auth()->user()->id == $id && $profile->resume_filename != null)
+                    <i class="fa fa-file">&nbsp;&nbsp;</i><a href="{{route('resume.download')}}" target="_blank">Download CV</a>                
                 @endif
             </div>
             <div class="col-3 col-sm-3 col-md-3 text-end mt-3">

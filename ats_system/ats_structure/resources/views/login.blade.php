@@ -4,14 +4,6 @@
 <div class="mt-5"><h3>&nbsp;</h3></div>
 <div class="body-contents-container">
     <div style="width: 400px" class="card-container ms-auto me-auto">
-        <div class='mt-3'>
-            @if(session()->has('error'))
-                <div class='alert alert-danger'>{{session('error')}}</div>
-            @endif
-            @if(session()->has('success'))
-                <div class='alert alert-success'>{{session('success')}}</div>
-            @endif
-        </div>    
         <form class="ms-auto me-auto mt-10" action="{{route('login.post')}}" method="POST">
             @csrf
             <div class="mb-5 text-center">

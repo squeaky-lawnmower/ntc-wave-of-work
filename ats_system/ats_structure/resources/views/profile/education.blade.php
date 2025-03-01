@@ -15,142 +15,64 @@
         </div>
         <div class="row">
             <div class="col-12" style="background: #FAFAFA;" class="mt-5 mb-5">            
-                <form action="{{route('profile.edit.experience.post', ['id' => auth()->user()->id])}}" method="POST">
+                <form action="{{route('profile.edit.education.post', ['id' => auth()->user()->id])}}" method="POST">
                     @csrf
                     <div class="row mt-2">
-                        <div class="col-12  col-sm-12 col-md-12">
-                            <label class="form-label">School</label>
-                            <input type="text" class="form-control" name="school"  value="">
-                            @if($errors->has('school'))
-                            <div class="text-danger">{{ $errors->first('school') }}</div>
-                        @endif
-                        </div>
+                        <x-form.input type="text" name="school" value="" />
                     </div>
                     <div class="row mt-2">
-                        <div class="col-12  col-sm-12 col-md-12">
-                            <label class="form-label">Degree</label>
-                            <input type="text" class="form-control" name="degree" value="">
-                            @if($errors->has('degree'))
-                                <div class="text-danger">{{ $errors->first('degree') }}</div>
-                            @endif
-                        </div>
-                    </div>
+                        <x-form.input type="text" name="degree" value="" />
+                    </div>                    
                     <div class="row mt-2">
-                        <div class="col-3  col-sm-3 col-md-3">
-                            <select class="form-select" name="start_month">
-                                <option selected disabled>- Start Month -</option>
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                            </select>
+                        <div class="col-6  col-sm-6 col-md-6">
+                            <x-form.month_year name="start" monthValue="" yearValue=""/>
                         </div>
-                        <div class="col-3  col-sm-3 col-md-3">
-                            <select class="form-select" name="start_year">
-                                <option selected disabled>- Start Year -</option>
-                                <option value="2000">2000</option>
-                                <option value="2001">2001</option>
-                                <option value="2002">2002</option>
-                            </select>
-                        </div>
-                        <div class="col-3  col-sm-3 col-md-3">
-                            <select class="form-select" name="end_month">
-                                <option selected disabled>- End Month -</option>
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                            </select>
-                        </div>
-                        <div class="col-3  col-sm-3 col-md-3">
-                            <select class="form-select" name="end_year">
-                                <option selected disabled>- End Year -</option>
-                                <option value="2000">2000</option>
-                                <option value="2001">2001</option>
-                                <option value="2002">2002</option>
-                            </select>
+                        <div class="col-6  col-sm-6 col-md-6">
+                            <x-form.month_year name="end" monthValue="" yearValue=""/>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12  col-sm-12 col-md-12 mt-3 mb-3">
-                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i>Add New</button>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus">&nbsp;&nbsp;</i>Add New</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-        @foreach ($experiences as $experience)
-        <hr style="color: #C3C3C3"/>    
+        @foreach ($education as $educ)
+        <hr/>    
         <div class="row">
-                <div class="col-12" class="mt-5 mb-5">            
-                    <form action="{{route('profile.edit.experience.post', ['id' => auth()->user()->id, 'expId' => $experience->id])}}" method="POST">
+                <div class="col-11" class="mt-5 mb-5">        
+                    <form action="{{route('profile.edit.education.post', ['id' => auth()->user()->id, 'educId' => $educ->id])}}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="row mt-2">
-                            <div class="col-12  col-sm-12 col-md-12">
-                                <label class="form-label">Company</label>
-                                <input type="text" class="form-control" name="company"  value="{{$experience->company}}">
-                                @if($errors->has('company'))
-                                <div class="text-danger">{{ $errors->first('company') }}</div>
-                            @endif
-                            </div>
+                            <x-form.input type="text" name="school" value="{{$educ->school}}" />
                         </div>
                         <div class="row mt-2">
-                            <div class="col-12  col-sm-12 col-md-12">
-                                <label class="form-label">Position</label>
-                                <input type="text" class="form-control" name="position" value="{{$experience->position}}">
-                                @if($errors->has('position'))
-                                    <div class="text-danger">{{ $errors->first('position') }}</div>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12  col-sm-12 col-md-12">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" name="description" rows=4>{{$experience->description}}</textarea>
-                                @if($errors->has('description'))
-                                    <div class="text-danger">{{ $errors->first('description') }}</div>
-                                @endif
-                            </div>
+                            <x-form.input type="text" name="degree" value="{{$educ->degree}}" />
                         </div>                    
                         <div class="row mt-2">
-                            <div class="col-3  col-sm-3 col-md-3">
-                                <select class="form-select" name="start_month">
-                                    <option selected disabled>- Start Month -</option>
-                                    <option value="1">January</option>
-                                    <option value="2">February</option>
-                                    <option value="3">March</option>
-                                </select>
+                            <div class="col-6  col-sm-6 col-md-6">
+                                <x-form.month_year name="start" monthValue="{{$educ->start_month}}" yearValue="{{$educ->start_year}}"/>
                             </div>
-                            <div class="col-3  col-sm-3 col-md-3">
-                                <select class="form-select" name="start_year">
-                                    <option selected disabled>- Start Year -</option>
-                                    <option value="2000">2000</option>
-                                    <option value="2001">2001</option>
-                                    <option value="2002">2002</option>
-                                </select>
-                            </div>
-                            <div class="col-3  col-sm-3 col-md-3">
-                                <select class="form-select" name="end_month">
-                                    <option selected disabled>- End Month -</option>
-                                    <option value="1">January</option>
-                                    <option value="2">February</option>
-                                    <option value="3">March</option>
-                                </select>
-                            </div>
-                            <div class="col-3  col-sm-3 col-md-3">
-                                <select class="form-select" name="end_year">
-                                    <option selected disabled>- End Year -</option>
-                                    <option value="2000">2000</option>
-                                    <option value="2001">2001</option>
-                                    <option value="2002">2002</option>
-                                </select>
+                            <div class="col-6  col-sm-6 col-md-6">
+                                <x-form.month_year name="end" monthValue="{{$educ->end_month}}" yearValue="{{$educ->end_year}}"/>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-12  col-sm-12 col-md-12 mt-3 mb-3">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                            <div class="col-12  col-sm-12 col-md-12 mt-3 mb-3 ">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save">&nbsp;&nbsp;</i>Update</button>
                             </div>
                         </div>
                     </form>
+                </div>
+                <div class="col-sm-1 col-md-1 col-1">
+                    <form action="{{route('profile.delete.education.post', ['id' => auth()->user()->id, 'educId' => $educ->id])}}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                    </form>    
                 </div>
             </div>
         @endforeach

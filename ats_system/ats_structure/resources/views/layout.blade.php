@@ -12,6 +12,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('/images/favicon.ico')}}">
 
     <script defer src="{{ asset('/js/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <script defer src="{{ asset('/js/script.js')}}"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <!--script defer src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script defer>

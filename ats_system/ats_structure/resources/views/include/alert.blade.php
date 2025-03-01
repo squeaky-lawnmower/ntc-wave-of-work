@@ -1,4 +1,4 @@
-<div class='col-6 col-sm-6 col-md-6 mt-5 alert-bubble'>
+<div name="alert_container" class='col-6 col-sm-6 col-md-6 mt-5 alert-bubble'>
     @if(session()->has('error'))
         <div class='alert alert-danger text-center'>{{session('error')}}</div>
     @endif
